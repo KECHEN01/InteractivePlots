@@ -35,7 +35,7 @@ ui<-fluidPage(
                                                 "2-Cauchy"="cauchy",
                                                 "3-Student t"="t"),selected=1)),
       
-      conditionalPanel(condition="input.types=='Elliptical Copula'&& input.plots=='2'",
+      conditionalPanel(condition="input.types=='Elliptical Copula'&& (input.plots=='2'||input.plots=='3')",
                        selectInput("no4",label="No. and Name of Copula",
                                    choices=list("1-Normal"="norm",
                                                 "2-Student t"="t",
@@ -57,8 +57,8 @@ ui<-fluidPage(
                    choices = list("Variate" = 1, "Probability" = 2,"Density"=3), 
                    selected = 1),
       
-      conditionalPanel(condition="input.plots=='2'",
-                       radioButtons("plot2",h4("Choose the type of Probability Plot"),
+      conditionalPanel(condition="input.plots=='2'||input.plots=='3'",
+                       radioButtons("plot2",h4("Choose the type of Plot"),
                                     choices=list("Contour"=1,"Perspective"=2),
                                     selected=1)),
       
@@ -337,6 +337,116 @@ server<-function(input,output,session){
         persp(P, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
       
     }
+    
+    
+    
+    #######################################Density###################################
+    #################################Contour
+    
+    ##Archimedean Copula
+    
+    if (input$types=="Archimedean Copula"&& input$plots =="3"&&input$plot2=="1" ){
+     uv = grid2d(x = (1:(10-1)/10))
+     D=darchmCopula(u = uv, v = uv, alpha = input$alpha, type =as.character(input$no),
+                output ="list", alternative = FALSE ) 
+     image(D, xlim = c(0, 1), ylim = c(0,1), col = heat.colors(16) )
+     contour(D, xlab = "u", ylab = "v", nlevels = 15, add = TRUE)
+    }
+    
+    
+    ##Elliptical Copula
+    
+    if (input$types=="Elliptical Copula"&& input$plots =="3"&&input$plot2=="1" ){
+      
+      if (input$no4=="norm"||input$no4=="logistic"){
+        D=dellipticalCopula(u = 100, v = 100, rho =input$alpha, param = NULL, type =input$no4,
+                            output = "list", border = TRUE)
+        image(D, col = heat.colors(16), ylab = "v", xlim = c(0,1), ylim = c(0,1) )
+        mtext("u", side = 1, line = 2)
+        contour(D, nlevels = 15, add = TRUE)}
+      
+      if (input$no4=="t"){
+        D=dellipticalCopula(u = 100, v = 100, rho =input$alpha, param =input$nu, type =input$no4,
+                            output = "list", border = TRUE)
+        image(D, col = heat.colors(16), ylab = "v",xlim = c(0,1), ylim = c(0,1) )
+        mtext("u", side = 1, line = 2)
+        contour(D, nlevels = 15, add = TRUE)}
+      
+      else {
+        D=dellipticalCopula(u = 100, v = 100, rho =input$alpha, param =c(input$r,input$s) , type =input$no4,
+                            output = "list", border = TRUE)
+        image(D, col = heat.colors(16), ylab = "v", xlim = c(0,1), ylim = c(0,1) )
+        mtext("u", side = 1, line = 2)
+        contour(D, nlevels = 15, add = TRUE)}
+    }
+    
+    
+    ##Extreme Value Copula
+    if (input$types=="Extreme Value Copula"&& input$plots =="3"&&input$plot2=="1" ){
+      
+      if (input$no3=="gumbel"||input$no3=="galambos"||input$no3=="husler.reiss"){
+        uv = grid2d(x = (1:100-1)/100)
+        D=devCopula(u =uv,v=uv, param =input$alpha, type =input$no3,
+                    output = "list",alternative=FALSE)
+        image(D, col = heat.colors(16) )
+        contour(D, nlevels = 15, add = TRUE)}
+      
+      else if (input$no3=="tawn"){
+        uv = grid2d(x = (1:100-1)/100)
+        D=devCopula(u =uv,v=uv, param =c(input$alpha,input$beta,input$r), type =input$no3,
+                    output = "list",alternative=FALSE)
+        image(D, col = heat.colors(16) )
+        contour(D, nlevels = 15, add = TRUE)}
+      
+      else{
+        uv = grid2d(x = (1:100-1)/100)
+        D=devCopula(u =uv,v=uv, param =c(input$alpha,input$theta), type =input$no3,
+                    output = "list",alternative=FALSE)
+        image(D, col = heat.colors(16) )
+        contour(D, nlevels = 15, add = TRUE)}
+    }
+     
+    
+    
+    
+    #################################Perspective
+    
+    ##Archimedean Copula
+    
+    if (input$types=="Archimedean Copula"&& input$plots =="3"&&input$plot2=="2" ){
+      uv = grid2d(x = (1:(15-1))/15)
+      D=darchmCopula(u =uv, v = uv, alpha =input$alpha, type = as.character(input$no),
+                     output = "list")
+      persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+            ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+            zlab = "C(u,v)" )
+    }
+    
+    
+      ##Elliptical Copula
+    
+    
+      ##Extreme Value Copula
+      if (input$types=="Extreme Value Copula"&& input$plots =="3"&&input$plot2=="2" ){
+        if (input$no3=="gumbel"||input$no3=="galambos"||input$no3=="husler.reiss"){
+        uv = grid2d(x = (0:15)/15)
+        D=devCopula(u =uv,v=uv, param =input$alpha, type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      
+      else if (input$no3=="tawn"){
+        uv = grid2d(x = (0:15)/15)
+        D=devCopula(u =uv,v=uv, param =c(input$alpha,input$beta,input$r), type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      
+      else{
+        uv = grid2d(x = (0:15)/15)
+        D=devCopula(u =uv,v=uv, param =c(input$alpha,input$theta), type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      }
+    
   })
   
   
