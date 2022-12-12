@@ -77,9 +77,9 @@ ui<-fluidPage(
       conditionalPanel(condition="input.types=='Elliptical Copula'&& input.plots=='2'&& input.no4=='epower'",
                        sliderInput("s","s value",min=0.1,max=5,value=2.5)),
       
-      conditionalPanel(condition="input.types=='Elliptical Copula'&&input.plots=='2'&& input.plot2=='2'",
-                       sliderInput("theta_plot","theta value",min=-180,max=180,value=0),
-                       sliderInput("phi","phi value",min=0,max=360,value=180))
+      conditionalPanel(condition="input.plot2=='2'",
+                       sliderInput("theta_plot","Plot: theta value",min=-180,max=180,value=-40),
+                       sliderInput("phi","Plot: phi value",min=0,max=360,value=30))
       
       
     ),
@@ -275,6 +275,68 @@ server<-function(input,output,session){
     
     }
     
+    
+    ######################Perspective
+    
+    ##Archimedean Copula
+    
+    if (input$types=="Archimedean Copula"&& input$plots =="2"&&input$plot2=="2" ){
+      uv=grid2d(x = (0:15)/15)
+      P=parchmCopula(u =uv, v = uv, alpha =input$alpha, type = as.character(input$no),
+                     output = "list")
+      persp(P, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+          ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+          zlab = "C(u,v)" )}
+    
+    
+    ##Elliptical Copula
+    
+    if (input$types=="Elliptical Copula"&& input$plots =="2"&&input$plot2=="2" ){
+      if (input$no4=="norm"||input$no4=="logistic"){
+        P=pellipticalCopula(u = 15, v = 15, rho =input$alpha, param = NULL, type =input$no4,
+                            output = "list", border = TRUE)
+        persp(P, theta = input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+              ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+              zlab = "C(u, v)", xlim = c(0, 1), ylim = c(0, 1), zlim = c(0, 1) )}
+      
+      if (input$no4=="t"){
+        P=pellipticalCopula(u = 15, v = 15, rho =input$alpha, param =input$nu, type =input$no4,
+                            output = "list", border = TRUE)
+        persp(P, theta = input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+              ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+              zlab = "C(u, v)", xlim = c(0, 1), ylim = c(0, 1), zlim = c(0, 1) )}
+      
+      else {
+        P=pellipticalCopula(u = 15, v = 15, rho =input$alpha, param =c(input$r,input$s) , type =input$no4,
+                            output = "list", border = TRUE)
+        persp(P, theta = input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+              ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+              zlab = "C(u, v)", xlim = c(0, 1), ylim = c(0, 1), zlim = c(0, 1) )}
+    }
+    
+    
+    ##Extreme Value Copula
+    
+    if (input$types=="Extreme Value Copula"&& input$plots =="2"&&input$plot2=="2" ){
+      if (input$no3=="gumbel"||input$no3=="galambos"||input$no3=="husler.reiss"){
+        uv = grid2d(x = (0:15)/15)
+        P=pevCopula(u =uv,v=uv, param =input$alpha, type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(P, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      
+      else if (input$no3=="tawn"){
+        uv = grid2d(x = (0:15)/15)
+        P=pevCopula(u =uv,v=uv, param =c(input$alpha,input$beta,input$r), type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(P, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      
+      else{
+        uv = grid2d(x = (0:15)/15)
+        P=pevCopula(u =uv,v=uv, param =c(input$alpha,input$theta), type =input$no3,
+                    output = "list",alternative=FALSE)
+        persp(P, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,ticktype = "detailed", cex = 0.5)}
+      
+    }
   })
   
   
