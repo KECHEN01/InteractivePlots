@@ -102,30 +102,30 @@ server<-function(input,output,session){
     new_no<-input$no
     new_plot<-input$plots
     types<-input$types
-    if(new_no== 1 && new_plot==1)
+    if(new_no== 1 )
       updateSliderInput(session,"alpha","alpha value",min=-1,max=10,value=4.5)
     
     if((new_no== 2 || new_no==4 || new_no==6 || new_no==8 
-        || new_no==12 || new_no==14 || new_no==15 || new_no==21) && (new_plot==1))
+        || new_no==12 || new_no==14 || new_no==15 || new_no==21) )
       updateSliderInput(session,"alpha","alpha value",
                         min=1,max=10,step=0.1,value=5)
     
-    if(new_no== 3 && new_plot==1)
+    if(new_no== 3)
       updateSliderInput(session,"alpha",min=-1,max=1,step=0.1,value=0)
     
-    if((new_no== 7 || new_no==9 || new_no==10 || new_no==22 ) && (new_plot==1) )
+    if((new_no== 7 || new_no==9 || new_no==10 || new_no==22 ) )
       updateSliderInput(session,"alpha",min=0,max=1,step=0.1,value=0.5)
     
-    if((new_no== 13 || new_no==16 || new_no==19 || new_no==20 ) && (new_plot==1) )
+    if((new_no== 13 || new_no==16 || new_no==19 || new_no==20 ))
       updateSliderInput(session,"alpha",min=0,max=10,step=0.1,value=5)
     
-    if(new_no== 11 &&new_plot==1)
+    if(new_no== 11 )
       updateSliderInput(session,"alpha",min=0,max=0.5,step=0.1,value=0.2)
     
-    if(new_no== 18 && new_plot==1)
+    if(new_no== 18 )
       updateSliderInput(session,"alpha",min=2,max=10,step=0.1,value=6)
     
-    if ((new_no== 5 || new_no==17 ) && (new_plot==1) )
+    if ((new_no== 5 || new_no==17 ))
       updateSliderInput(session,"alpha",min=-10,max=10,step=0.1,value=0)
     
     if (types=="Elliptical Copula")
@@ -212,6 +212,16 @@ server<-function(input,output,session){
     
     ###################Contour
     
+    ##Archimedean Copula
+    
+    if (input$types=="Archimedean Copula"&& input$plots =="2"&&input$plot2=="1" ){
+        uv=grid2d(x = (0:100)/100)
+        P=parchmCopula(u =uv, v = uv, alpha =input$alpha, type = as.character(input$no),
+                 output = "list")
+        image(P, col = heat.colors(16) )
+        contour(P, xlab = "u", ylab = "v", nlevels =15, add = TRUE)
+    }
+    
     ##Elliptical Copula
     
     if (input$types=="Elliptical Copula"&& input$plots =="2"&&input$plot2=="1" ){
@@ -238,7 +248,9 @@ server<-function(input,output,session){
         contour(P, nlevels =15, add = TRUE)}
     }
     
-    ##Extreme Value 
+    
+    ##Extreme Value Copula
+    
     if (input$types=="Extreme Value Copula"&& input$plots =="2"&&input$plot2=="1" ){
       if (input$no3=="gumbel"||input$no3=="galambos"||input$no3=="husler.reiss"){
         uv = grid2d(x = (0:100)/100)
