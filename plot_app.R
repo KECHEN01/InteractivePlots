@@ -217,14 +217,26 @@ server<-function(input,output,session){
     
     if (input$types=="Elliptical Copula"&& input$plots =="2"&&input$plot2=="1" ){
       
-      if (input$no4=="norm"){
+      if (input$no4=="norm"||input$no4=="logistic"){
         P=pellipticalCopula(u = 100, v = 100, rho =input$alpha, param = NULL, type =input$no4,
                    output = "list", border = TRUE)
         image(P, col = heat.colors(16), ylab = "v")
         mtext("u", side = 1, line = 2)
         contour(P, nlevels =15, add = TRUE)}
       
-      else {contourplot2(ellipCopula("t",param=input$alpha),pCopula)}
+      if (input$no4=="t"){
+        P=pellipticalCopula(u = 100, v = 100, rho =input$alpha, param =input$nu, type =input$no4,
+                            output = "list", border = TRUE)
+        image(P, col = heat.colors(16), ylab = "v")
+        mtext("u", side = 1, line = 2)
+        contour(P, nlevels =15, add = TRUE)}
+      
+      else {
+        P=pellipticalCopula(u = 100, v = 100, rho =input$alpha, param =c(input$r,input$s) , type =input$no4,
+                            output = "list", border = TRUE)
+        image(P, col = heat.colors(16), ylab = "v")
+        mtext("u", side = 1, line = 2)
+        contour(P, nlevels =15, add = TRUE)}
     }
   })
   
