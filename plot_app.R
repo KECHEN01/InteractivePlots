@@ -425,6 +425,55 @@ server<-function(input,output,session){
     
       ##Elliptical Copula
     
+    if (input$types=="Elliptical Copula"&& input$plots =="3"&&input$plot2=="2" ){
+      if (input$no4=="norm"||input$no4=="logistic"){
+        
+        D=dellipticalCopula(u = 15, v = 15, rho =input$alpha, param = NULL, type =input$no4,
+                            output = "list", border = TRUE)
+        Var = var(as.vector(D$z), na.rm = TRUE)
+        if (Var < 1.0e-6) {
+          Mean = round(1.5*mean(as.vector(D$z), na.rm = TRUE), 2)
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlim = c(0, Mean), zlab = "C(u,v)" )
+        } else {
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlab = "C(u,v)" )
+        }
+      }
+      
+      if (input$no4=="t"){
+        D=dellipticalCopula(u = 15, v = 15, rho =input$alpha, param =input$nu, type =input$no4,
+                            output = "list", border = TRUE)
+        Var = var(as.vector(D$z), na.rm = TRUE)
+        if (Var < 1.0e-6) {
+          Mean = round(1.5*mean(as.vector(D$z), na.rm = TRUE), 2)
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlim = c(0, Mean), zlab = "C(u,v)" )
+        } else {
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlab = "C(u,v)" )
+        }}
+      
+      else {
+        D=dellipticalCopula(u = 15, v = 15, rho =input$alpha, param =c(input$r,input$s) , type =input$no4,
+                            output = "list", border = TRUE)
+        Var = var(as.vector(D$z), na.rm = TRUE)
+        if (Var < 1.0e-6) {
+          Mean = round(1.5*mean(as.vector(D$z), na.rm = TRUE), 2)
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlim = c(0, Mean), zlab = "C(u,v)" )
+        } else {
+          persp(D, theta =input$theta_plot, phi =input$phi, col = "steelblue", shade = 0.5,
+                ticktype = "detailed", cex = 0.5, xlab = "u", ylab = "v",
+                zlab = "C(u,v)" )
+        }}
+    }
+    
     
       ##Extreme Value Copula
       if (input$types=="Extreme Value Copula"&& input$plots =="3"&&input$plot2=="2" ){
