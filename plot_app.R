@@ -1,5 +1,4 @@
 library(shiny)
-library(copula)
 library(fCopulae)
 ui<-fluidPage(
   titlePanel("Copula Slider"),
@@ -59,7 +58,7 @@ ui<-fluidPage(
                    selected = 1),
       
       conditionalPanel(condition="input.plots=='2'",
-                       radioButtons("plot2","Choose the type of Probability Plot",
+                       radioButtons("plot2",h4("Choose the type of Probability Plot"),
                                     choices=list("Contour"=1,"Perspective"=2),
                                     selected=1)),
       
@@ -238,6 +237,32 @@ server<-function(input,output,session){
         mtext("u", side = 1, line = 2)
         contour(P, nlevels =15, add = TRUE)}
     }
+    
+    ##Extreme Value 
+    if (input$types=="Extreme Value Copula"&& input$plots =="2"&&input$plot2=="1" ){
+      if (input$no3=="gumbel"||input$no3=="galambos"||input$no3=="husler.reiss"){
+        uv = grid2d(x = (0:100)/100)
+        P=pevCopula(u =uv,v=uv, param =input$alpha, type =input$no3,
+                            output = "list",alternative=FALSE)
+        image(P, col = heat.colors(16) )
+        contour(P, nlevels = 15, add = TRUE)}
+      
+      else if (input$no3=="tawn"){
+        uv = grid2d(x = (0:100)/100)
+        P=pevCopula(u =uv,v=uv, param =c(input$alpha,input$beta,input$r), type =input$no3,
+                    output = "list",alternative=FALSE)
+        image(P, col = heat.colors(16) )
+        contour(P, nlevels = 15, add = TRUE)}
+      
+      else{
+        uv = grid2d(x = (0:100)/100)
+        P=pevCopula(u =uv,v=uv, param =c(input$alpha,input$theta), type =input$no3,
+                  output = "list",alternative=FALSE)
+        image(P, col = heat.colors(16) )
+      contour(P, nlevels = 15, add = TRUE)}
+    
+    }
+    
   })
   
   
